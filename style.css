@@ -1,0 +1,46 @@
+body
+{
+        max-width  : 40rem;
+        padding    : 2rem;
+        margin     : auto;
+        line-height: 1.4;
+        font-family: Liberation Sans, sans-serif;
+        font-size  : 1.2rem;
+}
+
+a, a:visited
+{
+        color          : #0079d3;
+        text-decoration: none;
+}
+
+a:hover
+{
+        text-decoration: underline;
+}
+
+.no-bullet
+{
+        padding        : 0;
+        list-style-type: none;
+}
+
+pre, code
+{
+        overflow        : auto;
+        font-family     : Liberation Mono;
+        background-color: #eff0f1;
+        border-radius   : 0.2rem;
+        padding         : 0.2rem;
+}
+
+img
+{
+        width: 100%;
+}
+
+footer
+{
+        margin-top: 3rem;
+        text-align: center;
+}

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+[ "$#" -eq 0 ] && echo "missing title" >&2 && exit 1
+
+title="$*"
+filepath="notes/`echo "$title" | tr "[:blank:]" "-"`.html"
+
+entry="<li>`date +"%Y-%m-%d"`: <a href=\"$filepath\">$title</a>"
+
+note="<!DOCTYPE html>
+<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
+<meta charset=\"utf-8\">
+<link rel=\"stylesheet\" href=\"../style.css\">
+<title>$title</title>
+
+<h1>$title</h1>
+
+
+<footer><a href=\"../index.html\">index</a></footer>"
+
+sed -i "/<h1>notes<\/h1>/{N;a$entry
+}" "index.html"
+echo "$note" > "$filepath"
+vi +8 "$filepath"

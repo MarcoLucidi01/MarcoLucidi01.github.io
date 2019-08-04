@@ -28,7 +28,7 @@ a:hover
 pre, code
 {
         overflow        : auto;
-        font-family     : Liberation Mono;
+        font-family     : Liberation Mono, monospace;
         background-color: #eff0f1;
         border-radius   : 0.2rem;
         padding         : 0.2rem;

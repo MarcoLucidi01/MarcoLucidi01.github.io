@@ -26,7 +26,7 @@
 # fdisk -l
 </pre>
 
-<img src="../img/fdisk-l.png" title="LOL, yes, I have a 125 MiB pen drive">
+<img src="../imgs/fdisk-l.png" title="LOL, yes, I have a 125 MiB pen drive">
 <p>as you can see, in my case is "/dev/sdb".
 
 <p>Now, this step, will destroy all data on the drive. Make sure you have a
@@ -42,7 +42,7 @@ backup before proceeding.
 </ul>
 <p>and follow the instruction on screen.</p>
 
-<img src="../img/cryptsetup-luksFormat.png" title="/dev/sdb is my device of course">
+<img src="../imgs/cryptsetup-luksFormat.png" title="/dev/sdb is my device of course">
 
 <p>Of course, several other options can be added, I'm ok with the defaults, but
 if you want, in the info links, you will find suggestions to add other options.
@@ -58,16 +58,16 @@ if you want, in the info links, you will find suggestions to add other options.
 # mkfs -t ext4 /dev/mapper/name_you_used_before
 </pre>
 <p>and you will get a result similar to this:</p>
-<img src="../img/mkfs-t-ext4.png" title="In name_you_want I used pen">
+<img src="../imgs/mkfs-t-ext4.png" title="In name_you_want I used pen">
 
 <p>Now we can actually mount the drive. Here a picture, I'll explain in the next section.</p>
-<img src="../img/mount-luks.png" title="Like a normal drive">
+<img src="../imgs/mount-luks.png" title="Like a normal drive">
 
 <h2>mount an encrypted drive</h2>
 <p>Many Desktop Environments (at least KDE) are capable to recognize a LUKS
 drive when it is connected and do the dirty work for you.</p>
 
-<img src="../img/kde-mount-luks.png" title="Fancy KDE's way">
+<img src="../imgs/kde-mount-luks.png" title="Fancy KDE's way">
 
 <p>But, since I'm a fan of command line (mainly because is a "universal"
 interface among the distributions), I'm going to show that way.
@@ -84,7 +84,7 @@ interface among the distributions), I'm going to show that way.
 <p>(with file systems different from "ext" could be required specify the type)
 <p>Done.</p>
 
-<img src="../img/luks-summary.png">
+<img src="../imgs/luks-summary.png">
 
 <h2>umount an encrypted drive</h2>
 <p>The things here are easy:

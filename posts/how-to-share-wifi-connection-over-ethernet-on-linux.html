@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="language" content="english">
+<meta name="author" content="marco lucidi">
+<link rel="stylesheet" href="../style.css">
+<title>how to share wifi connection over ethernet on linux</title>
+<p>2015-12-03</p>
+<h1>how to share wifi connection over ethernet on linux</h1>
+<p>after watching the <strong><a href="https://www.youtube.com/watch?v=YIRWwKraoRk">video</a></strong>, maybe you want to know what exactly the
+command does! well, I'll try to explain.</p>
+<p>I write again the command here:</p>
+<pre><code># iptables -t nat -A POSTROUTING -o wlan0 -s 192.168.2.108 -j MASQUERADE
+</code></pre>
+<p>of course this is an <a href="https://en.wikipedia.org/wiki/Iptables">iptables</a> rule which use the <a href="https://netfilter.org/documentation/HOWTO/NAT-HOWTO.html"><code>nat</code></a> table</p>
+<pre><code>iptables -t nat
+</code></pre>
+<p>with this in effect, we tell iptables to manipulate the table (-t) <a href="https://netfilter.org/documentation/HOWTO/NAT-HOWTO.html"><code>nat</code></a></p>
+<pre><code>-A POSTROUTING
+</code></pre>
+<p>append (<code>-A</code>) to chain <code>POSTROUTING</code>, the following rule</p>
+<pre><code>-o wlan0
+</code></pre>
+<p>means that <code>wlan0</code> must be the outgoing interface of the packets</p>
+<pre><code>-s 192.168.2.108 -j MASQUERADE
+</code></pre>
+<p>all packets which have as source address (<code>-s</code>) <code>192.168.2.108</code> (Xbox 360 IP)
+will be <a href="http://www.tldp.org/HOWTO/IP-Masquerade-HOWTO/ipmasq-background2.1.html">masked</a> (<code>-j MASQUERADE</code>) and will come out through <code>wlan0</code> (<code>-o wlan0</code>).</p>
+<p>for a better understanding what words like: <code>table</code>, <code>chain</code> etc.. mean, I
+suggest you to read the <a href="https://netfilter.org/documentation/">iptables documentation</a>.</p>
+<p>I hope I have helped you to share your wifi connection over ethernet!</p>
+<footer><a href="../index.html">index</a></footer>

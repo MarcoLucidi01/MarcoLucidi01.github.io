@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="language" content="english">
+<meta name="author" content="marco lucidi">
+<link rel="stylesheet" href="../style.css">
+<title>encrypt a pen drive with LUKS on linux</title>
+<p>2016-10-31</p>
+<h1>encrypt a pen drive with LUKS on linux</h1>
+<h2>info</h2>
+<ul>
+<li><a href="https://gitlab.com/cryptsetup/cryptsetup">cryptsetup</a> (repo) <a href="https://linux.die.net/man/8/cryptsetup">man</a> (man page)</li>
+<li><a href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a> (wikipedia)</li>
+<li><a href="https://wiki.archlinux.org/index.php/Dm-crypt/Device_encryption">dm-crypt/Device encryption</a> (archwiki)</li>
+</ul>
+<h2>set up the drive</h2>
+<p>first of all, we need to install <code>cryptsetup</code> on our system. I'm on debian so:</p>
+<pre><code># apt-get install cryptsetup
+</code></pre>
+<p>after connecting the drive, we need to get the device name assigned to it:</p>
+<pre><code># fdisk -l
+</code></pre>
+<p><img src="../imgs/fdisk-l.png" alt="fdisk-l" /></p>
+<p>as you can see, in my case is <code>/dev/sdb</code>.</p>
+<p>now, this step will destroy all data on the drive, MAKE SURE YOU HAVE A BACKUP
+BEFORE PROCEEDING.</p>
+<p><code>umount</code> your drive and then type:</p>
+<pre><code># cryptsetup -y -v luksFormat your-device
+
+-y: query for passwords twice
+-v: verbose
+</code></pre>
+<p>and follow the instruction on screen.</p>
+<p><img src="../imgs/cryptsetup-luksFormat.png" alt="cryptsetup-luksFormat" /></p>
+<p>of course, several other options can be added, I'm ok with the defaults, but if
+you want, in the info links, you will find suggestions to add other options.</p>
+<p>ok, the device is encrypted. what's missing? a file system!</p>
+<pre><code># cryptsetup luksOpen your-device name-you-want
+</code></pre>
+<p>to unlock the drive, you will be asked for the password of course</p>
+<pre><code># mkfs -t ext4 /dev/mapper/name-you-used-before
+</code></pre>
+<p>and you will get a result similar to this:</p>
+<p><img src="../imgs/mkfs-t-ext4.png" alt="mkfs-t-ext4" /></p>
+<p>now we can actually mount the drive. here a picture, I'll explain in the next
+section.</p>
+<p><img src="../imgs/mount-luks.png" alt="mount-luks" /></p>
+<h2>mount an encrypted drive</h2>
+<p>many desktop environments (at least KDE) are capable to recognize a <code>LUKS</code> drive
+when it is connected and do the dirty work for you</p>
+<p><img src="../imgs/kde-mount-luks.png" alt="kde-mount-luks" /></p>
+<p>but, since I'm a fan of command line (mainly because is a &quot;universal&quot; interface
+among distributions), I'm going to show that way.</p>
+<p>zero step: connect the drive and check the device name</p>
+<p>first step: unlock the drive</p>
+<pre><code># cryptsetup luksOpen your-device name-you-want
+</code></pre>
+<p>second step: mount the drive on a mount point</p>
+<pre><code># mount /dev/mapper/name-you-used-before mount-point-you-like
+</code></pre>
+<p>(with file systems different from <code>ext</code> could be required to specify the type)</p>
+<p>done!</p>
+<p><img src="../imgs/luks-summary.png" alt="luks-summary" /></p>
+<h2>umount an encrypted drive</h2>
+<p>things are easy here:</p>
+<pre><code># umount mount-point-used-before
+# cryptsetup luksClose name-used-before
+</code></pre>
+<p>done!</p>
+<h2>conclusion</h2>
+<p>this isn't a professional tutorial, no argument has been deepened, it's just a
+quick way to set up an encrypted pen drive (or external hard disk, sd card,
+etc...) with a password that works well on linux.</p>
+<p>I encourage you to explore more these topics starting from the links provided at
+the beginning of the post to get a better understanding of what we did today.</p>
+<footer><a href="../index.html">index</a></footer>

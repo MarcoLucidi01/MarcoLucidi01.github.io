@@ -13,6 +13,6 @@ if you wish to contact me: *marcolucidi95 at gmail dot com*
 [3]: https://www.youtube.com/channel/UCshwKTbEEolwmZkwpgI2EOA
 [4]: https://stackexchange.com/users/8760742/marcolucidi?tab=accounts
 
-- 2016-10-31: [encrypt a pen drive with LUKS on linux](posts/encrypt-a-pen-drive-with-LUKS-on-linux.html)
-- 2016-02-08: [virtualbox guest additions on debian](posts/virtualbox-guest-additions-on-debian.html)
-- 2015-12-03: [how to share wifi connection over ethernet on linux](posts/how-to-share-wifi-connection-over-ethernet-on-linux.html)
+- 2016-10-31: [encrypt a pen drive with LUKS on linux](posts/encrypt-a-pen-drive-with-LUKS-on-linux.md)
+- 2016-02-08: [virtualbox guest additions on debian](posts/virtualbox-guest-additions-on-debian.md)
+- 2015-12-03: [how to share wifi connection over ethernet on linux](posts/how-to-share-wifi-connection-over-ethernet-on-linux.md)

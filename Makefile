@@ -15,7 +15,7 @@ $(INDEXHTML): $(INDEXMD) $(HEADERHTML)
 	@echo $@
 	@cp $(HEADERHTML) $@
 	@sed -n '1p' $< | sed -e 's/^# /<title>/' -e 's/$$/<\/title>/' >> $@
-	@cmark $< | sed 's/<ul>/<ul class="no-bullet">/' >> $@
+	@cmark $< | sed -e 's/\.md/\.html/g' -e 's/<ul>/<ul class="no-bullet">/' >> $@
 
 $(INDEXMD): $(ABOUTMD) $(POSTMD)
 	@echo $@
@@ -25,8 +25,7 @@ $(INDEXMD): $(ABOUTMD) $(POSTMD)
 	@for post in $(POSTMD); do \
 		date=`sed -n '1p' $$post`; \
 		title=`sed -n '3p' $$post | sed 's/^# //'`; \
-		link=`echo $$post | sed -e 's/.md/.html/'`; \
-		printf "%c %s: [%s](%s)\n" "-" "$$date" "$$title" "$$link" >> $@.tmp; \
+		printf "%c %s: [%s](%s)\n" "-" "$$date" "$$title" "$$post" >> $@.tmp; \
 	done
 	@sort -r -o $@.tmp $@.tmp
 	@cat $@.tmp >> $@

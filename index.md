@@ -11,4 +11,5 @@ my projects are hosted at
 
 if you wish to contact me: *marcolucidi95 at gmail dot com*
 
+- 2016-02-08: [virtualbox guest additions on debian](posts/virtualbox-guest-additions-on-debian.html)
 - 2015-12-03: [how to share wifi connection over ethernet on linux](posts/how-to-share-wifi-connection-over-ethernet-on-linux.html)

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="language" content="english">
+<meta name="author" content="marco lucidi">
+<link rel="stylesheet" href="../style.css">
+<title>installing only gnu/linux (debian jessie) on a mid 2011 imac</title>
+<p>2016-12-03</p>
+<h1>installing only gnu/linux (debian jessie) on a mid 2011 imac</h1>
+<p><a href="https://www.youtube.com/watch?v=TPbx6QH_p0s"><strong>boot process video</strong></a></p>
+<p>the reasons why I have done this are various, but I think, the most significant
+is that, after using a linux distro daily on my laptop, going back on osx at
+home was painful and I felt like in a &quot;cage&quot;. this was not good for me, and in
+fact, I preferred to use the laptop even at home and, I stopped to use that imac
+for a while.</p>
+<p>then I realize that a full linux installation on a mac can be done easily, so, I
+did some research (<a href="https://unix.stackexchange.com/questions/320107/installing-only-linux-on-a-mac-and-in-case-go-back-to-macos">question unix stackExchange</a>, <a href="https://wiki.archlinux.org/index.php/IMac_Aluminum">arch wiki</a>, <a href="https://wiki.debian.org/iMacIntel">debian
+wiki</a>) and on a sunday morning I did it!</p>
+<p>I have this little guy here (<a href="https://support.apple.com/kb/sp623?locale=en_US">imac12,1</a>), but with 8gb of ram which I
+personally installed.</p>
+<p>first of all, I made a <a href="https://support.apple.com/en-us/HT201372">macos installation media</a>, so, if in future I want, I
+can reinstall it easily, since my intention was to completely format the hard
+disk.</p>
+<p>then I used a debian 8 <a href="https://www.debian.org/CD/netinst/">netinstall</a> through an usb drive, simply rebooted
+holding down &quot;opt key&quot; and selected the right option. the installation was
+completed without issues using the ethernet cable (the wifi has been also
+recognized by the installer).</p>
+<p>I installed kde and at the first reboot I got only the shell! unfortunately
+<a href="https://packages.debian.org/stable/firmware-linux-nonfree">firmware-linux-nonfree</a> are required to get the radeon work!</p>
+<h2>what did work out of the box</h2>
+<ul>
+<li><strong>ethernet</strong>: since the installer;</li>
+<li><strong>wifi</strong>: I guess since the installer because it was recognized, but I can't
+say for sure;</li>
+<li><strong>usb</strong>: nothing to say;</li>
+<li><strong>thunderbolt</strong>: tested with a second 1080p vga monitor that I use regularly
+(the only thing I can test);</li>
+<li><strong>speakers</strong>;</li>
+<li><strong>camera and microphone</strong>: tested with vlc;</li>
+<li><strong>suspend to ram</strong>: all good;</li>
+<li><strong>cd/dvd</strong>: tested with k3b;</li>
+</ul>
+<h2>what did NOT work out of the box</h2>
+<ul>
+<li>
+<p><strong>video card</strong>: as I said, firmware-linux-nonfree are required;</p>
+</li>
+<li>
+<p><strong>jack audio</strong>: small issue, fix:</p>
+<pre><code># echo &quot;options snd-hda-intel model=imac27_122&quot; &gt;&gt; /etc/modprobe.d/imac\_local.conf
+</code></pre>
+<p>reboot. <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=743936">Bugreport</a>;</p>
+</li>
+<li>
+<p><strong>apple wireless keyboard and magic mouse</strong>: fun fact, in the installer, I
+did the entire process with the apple wireless keyboard, but then, once
+debian was up and running, it didn't work anymore. I guess, bluetooth
+drivers are missing, but I won't install them since I hate that things;</p>
+</li>
+<li>
+<p><strong>brightness</strong>: found a fix with xrandr:</p>
+<pre><code>xrandr --output eDP --brightness 0.5
+</code></pre>
+</li>
+</ul>
+<p>I can't test the <strong>firewire port</strong> nor the <strong>sd reader</strong>.</p>
+<p>finally I started to use this machine again!</p>
+<footer><a href="../index.html">index</a></footer>

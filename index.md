@@ -13,6 +13,7 @@ if you wish to contact me: *marcolucidi95 at gmail dot com*
 [3]: https://www.youtube.com/channel/UCshwKTbEEolwmZkwpgI2EOA
 [4]: https://stackexchange.com/users/8760742/marcolucidi?tab=accounts
 
+- 2017-07-27: [a tetris clone](posts/a-tetris-clone.md)
 - 2016-12-03: [installing only gnu/linux (debian jessie) on a mid 2011 imac](posts/installing-only-gnu-linux-debian-jessie-on-a-mid-2011-imac.md)
 - 2016-10-31: [encrypt a pen drive with LUKS on linux](posts/encrypt-a-pen-drive-with-LUKS-on-linux.md)
 - 2016-02-08: [virtualbox guest additions on debian](posts/virtualbox-guest-additions-on-debian.md)

@@ -15,17 +15,17 @@ $(INDEXHTML): $(INDEXMD) $(HEADERHTML)
 	@echo $@
 	@cp $(HEADERHTML) $@
 	@sed -n -e '1 s/^/<title>/' -e '1 s/$$/<\/title>/p' $< >> $@
-	@cmark $< | sed -e 's/\.md/\.html/g' -e 's/<ul>/<ul class="no-bullet">/' >> $@
+	@cmark $< | sed -e 's/\.md/\.html/g' | tac | awk '!f && /<ul>/ {$$0="<ul class=\"no-bullet\">"; f=1} 1' | tac >> $@
 
 $(INDEXMD): $(ABOUTMD) $(POSTMD)
 	@echo $@
 	@cp $< $@
-	@echo >> $@
+	@printf "\nposts\n-----\n\n" >> $@
 	@touch $@.tmp
 	@for post in $(POSTMD); do \
 		date=`sed -n '1p' $$post`; \
 		title=`sed -n '3p' $$post`; \
-		printf "%c %s: [%s](%s)\n" "-" "$$date" "$$title" "$$post" >> $@.tmp; \
+		printf "%c %s [%s](%s)\n" "-" "$$date" "$$title" "$$post" >> $@.tmp; \
 	done
 	@sort -r -o $@.tmp $@.tmp
 	@cat $@.tmp >> $@

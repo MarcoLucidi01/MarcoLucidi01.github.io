@@ -1,6 +1,7 @@
 2017-07-27
 
-# a tetris clone
+a tetris clone
+==============
 
 this is my first """big""" project in C, made after reading the bible [K&R
 Second Edition][1] and after taking the Harvard course [CS50][2].
@@ -10,7 +11,8 @@ I had to choose it as the main tool for the project.
 
 here a [demo video][3] and here the [**source code**][4].
 
-## why tetris?
+why tetris?
+-----------
 
 well, first because I like it: I used to play **A LOT** when I was a kid on a
 "chinese fake GameBoy" I had and more recently on my smartphone. and then
@@ -20,7 +22,8 @@ bit challenging, considering the language I chose.
 also it is often considered as an "Hello, World!" to game development so once in
 my life I had to do it.
 
-## the game
+the game
+--------
 
 I tried to stick with the classic *Tetris*, so no "wall kick", no "hold piece",
 no "ghost piece", but I applied some "new" features that I like: "soft drop"
@@ -46,7 +49,8 @@ called "scores.txt" within the folder in which the executable resides.
 for now, there isn't a way to add a nickname (because you know, probably I will
 be the only player...).
 
-## the program
+the program
+-----------
 
 if you haven't notice yet, I used the [ncurses][7] library.
 
@@ -117,7 +121,8 @@ function to rotate a matrix and sometimes rotate it backwards, but my functions
 simply increment or decrement an index in range *\[0,3\]*. of course I did this
 because the amount of memory used is very low.
 
-## conclusion
+conclusion
+----------
 
 at the end of the day, the main goals of this project were:
 

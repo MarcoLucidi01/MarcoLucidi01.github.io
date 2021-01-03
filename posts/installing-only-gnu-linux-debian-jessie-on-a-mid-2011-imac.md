@@ -1,6 +1,7 @@
 2016-12-03
 
-# installing only gnu/linux (debian jessie) on a mid 2011 imac
+installing only gnu/linux (debian jessie) on a mid 2011 imac
+============================================================
 
 [**boot process video**][1]
 
@@ -29,7 +30,8 @@ recognized by the installer).
 I installed kde and at the first reboot I got only the shell! unfortunately
 [firmware-linux-nonfree][8] are required to get the radeon work!
 
-## what did work out of the box
+what did work out of the box
+----------------------------
 
 - **ethernet**: since the installer;
 - **wifi**: I guess since the installer because it was recognized, but I can't
@@ -42,7 +44,8 @@ I installed kde and at the first reboot I got only the shell! unfortunately
 - **suspend to ram**: all good;
 - **cd/dvd**: tested with k3b;
 
-## what did NOT work out of the box
+what did NOT work out of the box
+--------------------------------
 
 - **video card**: as I said, firmware-linux-nonfree are required;
 - **jack audio**: small issue, fix:

@@ -1,4 +1,5 @@
-# marco lucidi
+marco lucidi
+============
 
 hi, my name is Marco Lucidi, I'm a twenty four years old programmer and computer
 science enthusiast. I live near Rome (Italy).

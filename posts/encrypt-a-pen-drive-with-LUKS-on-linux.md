@@ -1,14 +1,17 @@
 2016-10-31
 
-# encrypt a pen drive with LUKS on linux
+encrypt a pen drive with LUKS on linux
+======================================
 
-## info
+info
+----
 
 - [cryptsetup][1] (repo) [man][2] (man page)
 - [LUKS][3] (wikipedia)
 - [dm-crypt/Device encryption][4] (archwiki)
 
-## set up the drive
+set up the drive
+----------------
 
 first of all, we need to install `cryptsetup` on our system. I'm on debian so:
 
@@ -56,7 +59,8 @@ section.
 
 ![mount-luks][8]
 
-## mount an encrypted drive
+mount an encrypted drive
+------------------------
 
 many desktop environments (at least KDE) are capable to recognize a `LUKS` drive
 when it is connected and do the dirty work for you
@@ -82,7 +86,8 @@ done!
 
 ![luks-summary][10]
 
-## umount an encrypted drive
+umount an encrypted drive
+-------------------------
 
 things are easy here:
 
@@ -91,7 +96,8 @@ things are easy here:
 
 done!
 
-## conclusion
+conclusion
+----------
 
 this isn't a professional tutorial, no argument has been deepened, it's just a
 quick way to set up an encrypted pen drive (or external hard disk, sd card,

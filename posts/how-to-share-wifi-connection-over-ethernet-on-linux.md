@@ -1,6 +1,7 @@
 2015-12-03
 
-# how to share wifi connection over ethernet on linux
+how to share wifi connection over ethernet on linux
+===================================================
 
 after watching the **[video][1]**, maybe you want to know what exactly the
 command does! well, I'll try to explain.

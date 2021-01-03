@@ -1,6 +1,7 @@
 2016-02-08
 
-# virtualbox guest additions on debian
+virtualbox guest additions on debian
+====================================
 
 ok, this is a post for myself: every time that I need to install a new vm on
 [virtualbox][1] I systematically forget the steps to install guest additions!

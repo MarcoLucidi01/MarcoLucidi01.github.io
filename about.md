@@ -1,7 +1,7 @@
 Marco Lucidi
 ============
 
-twenty five years old. programmer. computer science enthusiast. italian.
+twenty five years old. italian. computer science enthusiast. programmer.
 
 you can find me on [GitHub][1], [StackOverflow][2], [LinkedIn][3], [Reddit][4]
 and [YouTube][5].
@@ -24,6 +24,7 @@ projects
 - [privately-search-selected][7] — Firefox addon that adds menu item to privately search selected text
 - [todo][8] — command line todo list
 - [b64][9] — base64 encoding and decoding tool ([codereview][10])
+- [setup][11] — scripts, dotfiles and configs to setup my environment
 
 [5]: https://github.com/MarcoLucidi01/sws
 [6]: https://github.com/MarcoLucidi01/tetris_clone
@@ -31,3 +32,4 @@ projects
 [8]: https://github.com/MarcoLucidi01/todo
 [9]: https://github.com/MarcoLucidi01/b64
 [10]: https://codereview.stackexchange.com/questions/232103/base64-encoding-and-decoding-tool
+[11]: https://github.com/MarcoLucidi01/setup

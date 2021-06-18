@@ -24,7 +24,7 @@ projects
 - [privately-search-selected][8] — Firefox addon that adds menu item to privately search selected text
 - [todo][9] — command line todo list
 - [b64][10] — base64 encoding and decoding tool ([codereview][11])
-- [setup][12] — scripts, dotfiles and configs to setup my environment
+- [dotfiles][12] & [bin][13] — my dotfiles & utility scripts
 
 [6]: https://github.com/MarcoLucidi01/sws
 [7]: https://github.com/MarcoLucidi01/tetris_clone
@@ -32,4 +32,5 @@ projects
 [9]: https://github.com/MarcoLucidi01/todo
 [10]: https://github.com/MarcoLucidi01/b64
 [11]: https://codereview.stackexchange.com/questions/232103/base64-encoding-and-decoding-tool
-[12]: https://github.com/MarcoLucidi01/setup
+[12]: https://github.com/MarcoLucidi01/dotfiles
+[13]: https://github.com/MarcoLucidi01/bin

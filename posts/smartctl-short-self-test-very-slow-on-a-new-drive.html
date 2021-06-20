@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="language" content="english">
+<meta name="author" content="marco lucidi">
+<link rel="stylesheet" href="../style.css">
+<title>smartctl short self test very slow on a new drive</title>
+<p>2021-06-20</p>
+<h1>smartctl short self test very slow on a new drive</h1>
+<p>I recently bought a new 4TB hard drive for my (homemade) nas and started setting
+it up. I created a partition table with a single partition and an <code>ext4</code>
+filesystem. I then <code>mount</code>ed the partition, but before starting <code>rsync</code>ing my
+data, I wanted to do a little <a href="https://en.wikipedia.org/wiki/S.M.A.R.T.#Self-tests">S.M.A.R.T. testing</a>. the drive only supports
+<em>short</em> and <em>long</em> self tests, no <em>conveyance</em>. I went for the short one since
+I'm not very paranoid and I already have <code>smartd</code> setup to run tests weekly on
+all the nas's disks.</p>
+<p><code>smartctl</code> was so kind to tell me that the test will be completed in 2 minutes:</p>
+<pre><code>Testing has begun.
+Please wait 2 minutes for test to complete.
+Test will complete after Fri Jun 18 18:34:03 2021 CEST
+Use smartctl -X to abort test.
+</code></pre>
+<p>I listened to a song while waiting. 5 minutes goes by, song is over, let me
+check:</p>
+<pre><code>Self-test execution status:      ( 241) Self-test routine in progress...
+                                        10% of test remaining.
+</code></pre>
+<p>ok, 10% remaining, we are almost there. let's wait. and 10 minutes goes by,
+still 10% remaining. 20 minutes, still 10% remaining. 25 minutes, still 10%. it
+seems to be stuck! it should have completed in 2 minutes, but half an hour has
+passed and it still hasn't finished.</p>
+<p>I was ninety percent sure that I ran the short test, not the long one. I aborted
+the test with <code>smartctl -X</code> and this ugly line got into the self test log:</p>
+<pre><code>Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+...
+# 9  Short offline       Aborted by host               10%         0         -
+</code></pre>
+<p>which confirmed that it was indeed a <em>short</em> test.</p>
+<p>why was it taking so long? faulty disk?</p>
+<p>I ran the short test again hoping this time it would finish in a reasonable
+amount of time. same story, stuck at 10% remaining after more than 20 minutes. I
+then decided to use one of the old tricks that <em>always</em> works with technology: I
+rebooted the machine... boom, another nasty line in the log:</p>
+<pre><code># 8  Short offline       Interrupted (host reset)      10%         1         -
+</code></pre>
+<p>I started the test again. meanwhile my <em>google-fu</em> wasn't helping much, everyone
+talked about <strong>long</strong> tests being slow, 30+ hours on old disks that were about
+to fail. my disk is new, all the smart attributes are perfect. then I read
+somewhere that if the disk is doing a lot of I/O i.e.  is being used, the tests
+may take longer. ok, makes sense, but there is no data on my disk and no service
+is using it yet.</p>
+<p>I felt a bit discouraged, maybe I had to return this drive and wait for another
+one to arrive etc...</p>
+<p>as a last resort, I tried to <code>umount</code> the partition thinking that somehow it
+could help. <strong>10 seconds later the test completed without errors</strong>:</p>
+<pre><code># 7  Short offline       Completed without error       00%         2         -
+</code></pre>
+<p>woow! coincidence? at least the disk seems to be good. I immediately started
+another short test and completed without errors in 2 minutes!</p>
+<pre><code># 6  Short offline       Completed without error       00%         2         -
+</code></pre>
+<p>ok, tests takes long <strong>only</strong> when it's mounted. strange because <em>nobody</em> is
+using the disk (or at least that's what I believed). I thought: &quot;maybe I did
+something wrong when I partitioned the disk&quot; and I repartitioned it again,
+<code>mount</code>ed again aaand test stuck at 10% remaining.</p>
+<p>I didn't know what to do, I wasn't quite sure that the disk was OK and that it
+was <em>safe</em> to put data on it. I fired up <code>top</code>** and stared at it for a while
+thinking, like when you open the hood of a car trying to figure out what's
+wrong. now with cars, that never helped me because I know nothing about cars,
+but with computers sometimes it does help. I noticed this process that kept
+popping up: <code>ext4lazyinit</code>. mmmm never heard of it, but the name was suspicious.
+I found <a href="https://www.thomas-krenn.com/en/wiki/Ext4_Filesystem#Lazy_Initialization">this beautiful page</a> which talks about lazy initialization in <code>ext4</code>
+filesystems (emphasis mine):</p>
+<blockquote>
+<p>When creating an Ext4 file system, the existing regions of the inode tables
+must be cleaned (overwritten with nulls, or &quot;zeroed&quot;). The &quot;lazyinit&quot; feature
+should significantly accelerate the creation of a file system, because it does
+not immediately initialize all inode tables, initializing them gradually
+instead during the initial mounting process in background
+...
+<strong>The &quot;ext4lazyinit&quot; kernel process writes at up to 16,000kB/s to the device
+and thereby uses a great deal of the hard disk’s bandwidth</strong></p>
+</blockquote>
+<p>aaaha so maybe this is the process that is keeping my disk busy and it's slowing
+down short self tests! to prove this theory I recreated the filesystem <em>again</em>
+using these extended options:</p>
+<pre><code># mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sda1
+</code></pre>
+<blockquote>
+<p>By specifying these options, the inodes and the journal will be initialized
+immediately during creation.</p>
+</blockquote>
+<p>filesystem creation took quite a while this time, but in the end, no more
+<code>ext4lazyinit</code> process and short smart self test completed in about 2 minutes
+even with the partition mounted:</p>
+<pre><code># 3  Short offline       Completed without error       00%         3         -
+# 4  Short offline       Completed without error       00%         3         -
+# 5  Short offline       Completed without error       00%         3         -
+</code></pre>
+<p>another solution was probably to <em>just wait</em> and eventually short tests would
+complete rather fast once the disk was no more busy. at least, my &quot;impatience&quot;
+let me figure out what was really happening and learn new things which is always
+good!</p>
+<hr />
+<small>
+<p>** only later I discovered <code>iotop</code> which would have helped a lot.</p>
+</small>
+<footer><a href="../index.html">index</a></footer>

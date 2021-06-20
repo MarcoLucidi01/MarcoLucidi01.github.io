@@ -38,6 +38,7 @@ projects
 posts
 -----
 
+- 2021-06-20 [smartctl short self test very slow on a new drive](posts/smartctl-short-self-test-very-slow-on-a-new-drive.md)
 - 2017-07-27 [a tetris clone](posts/a-tetris-clone.md)
 - 2016-12-03 [installing only gnu/linux (debian jessie) on a mid 2011 imac](posts/installing-only-gnu-linux-debian-jessie-on-a-mid-2011-imac.md)
 - 2016-10-31 [encrypt a pen drive with LUKS on linux](posts/encrypt-a-pen-drive-with-LUKS-on-linux.md)

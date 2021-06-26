@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# generate: generates html and index pages from markdown posts.
+# generate: generates html, index and rss.xml from markdown posts.
 #           functions are meant to be executed by make through the makefile
-#           which handles dependencies between files. no configuration should go
-#           here, everything (i.e. filenames) is passed by make.
+#           which manages dependencies between files. no configuration should go
+#           here, everything (e.g. filenames) is passed by make.
 
 set -e
 
@@ -16,6 +16,20 @@ dieifempty() {
                 echo "error: $2" >&2
                 exit 1
         fi
+}
+
+getpostmd() {
+        echo "$1" | sed 's/\.html$/.md/'
+}
+
+getpostdate() {
+        post="$(getpostmd "$1")"
+        sed -n '1p' "$post"
+}
+
+getposttitle() {
+        post="$(getpostmd "$1")"
+        sed -n '3p' "$post"
 }
 
 #
@@ -32,11 +46,12 @@ indexhtml() {
 }
 
 indexmd() {
-        aboutmd="$1"
-        shift # rest of arguments are markdown posts filenames
+        rssxml="$1"
+        aboutmd="$2"
+        shift 2 # rest of arguments are markdown posts filepaths
 
         cat "$aboutmd"
-        printf "\nposts\n-----\n\n"
+        printf "\nposts <small>([rss](%s))</small>\n-------------------------------------\n\n" "$rssxml"
         tmp="$(mktemp)"
         for post in "$@"; do
                 date="$(sed -n '1p' "$post")"
@@ -45,6 +60,69 @@ indexmd() {
         done
         sort -r "$tmp"
         rm "$tmp"
+}
+
+rssxml() {
+        baseurl="$1"
+        rssurl="$baseurl/$2"
+        generator="$baseurl/$(basename "$0")"
+        lang="$3"
+        aboutmd="$4"
+        shift 4 # rest of arguments are html posts filepaths
+
+        channeltitle="$(sed -n '1p' "$aboutmd")"
+        channeldesc="$(sed -n '4p' "$aboutmd")"
+        now="$(date --utc --rfc-email)"
+
+        printf '<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <atom:link href="%s" rel="self" type="application/rss+xml"/>
+        <title>%s</title>
+        <link>%s</link>
+        <description>%s</description>
+        <language>%s</language>
+        <pubDate>%s</pubDate>
+        <lastBuildDate>%s</lastBuildDate>
+        <generator>%s</generator>
+        <docs>https://blogs.law.harvard.edu/tech/rss</docs>
+' "$rssurl" "$channeltitle" "$baseurl" "$channeldesc" "$lang" "$now" "$now" "$generator"
+
+        tmp="$(mktemp)"
+        for posthtml in "$@"; do
+                postdate="$(getpostdate "$posthtml")"
+                printf "%s %s\n" "$postdate" "$posthtml" >> "$tmp"
+        done
+        # aggregators sort items anyway, but I like to have them sorted by date
+        # desc even in the xml.
+        sort -r -o "$tmp" "$tmp"
+
+        while read -r postdate posthtml; do
+                posttitle="$(getposttitle "$posthtml")"
+                postlink="$baseurl/$posthtml"
+                # TODO https://validator.w3.org/feed/ says the feed is valid,
+                # but "description should not contain relative URL references"
+                postdesc="$(awk '/^<h1/ && !p { p=1; next } /^<footer/ { p=0 } p' "$posthtml")"
+                postdate="$(echo "$postdate" | xargs date --utc --rfc-email --date)"
+
+                printf '
+        <item>
+            <title>%s</title>
+            <pubDate>%s</pubDate>
+            <link>%s</link>
+            <guid>%s</guid>
+            <source url="%s">%s</source>
+            <description><![CDATA[%s]]></description>
+        </item>
+' "$posttitle" "$postdate" "$postlink" "$postlink" "$rssurl" "$channeltitle" "$postdesc"
+
+        done < "$tmp"
+        rm "$tmp"
+
+        printf '
+    </channel>
+</rss>
+'
 }
 
 posthtml() {

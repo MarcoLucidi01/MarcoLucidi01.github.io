@@ -35,8 +35,8 @@ projects
 [12]: https://github.com/MarcoLucidi01/dotfiles
 [13]: https://github.com/MarcoLucidi01/bin
 
-posts
------
+posts <small>([rss](rss.xml))</small>
+-------------------------------------
 
 - 2021-06-20 [smartctl short self test very slow on a new drive](posts/smartctl-short-self-test-very-slow-on-a-new-drive.md)
 - 2017-07-27 [a tetris clone](posts/a-tetris-clone.md)

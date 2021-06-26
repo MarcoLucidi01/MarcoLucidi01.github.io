@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <atom:link href="https://marcolucidi01.github.io/rss.xml" rel="self" type="application/rss+xml"/>
+        <title>Marco Lucidi</title>
+        <link>https://marcolucidi01.github.io</link>
+        <description>twenty five years old. italian. computer science enthusiast. programmer.</description>
+        <language>en</language>
+        <pubDate>Sat, 26 Jun 2021 15:02:30 +0000</pubDate>
+        <lastBuildDate>Sat, 26 Jun 2021 15:02:30 +0000</lastBuildDate>
+        <generator>https://marcolucidi01.github.io/generate</generator>
+        <docs>https://blogs.law.harvard.edu/tech/rss</docs>
+
+        <item>
+            <title>smartctl short self test very slow on a new drive</title>
+            <pubDate>Sun, 20 Jun 2021 00:00:00 +0000</pubDate>
+            <link>https://marcolucidi01.github.io/posts/smartctl-short-self-test-very-slow-on-a-new-drive.html</link>
+            <guid>https://marcolucidi01.github.io/posts/smartctl-short-self-test-very-slow-on-a-new-drive.html</guid>
+            <source url="https://marcolucidi01.github.io/rss.xml">Marco Lucidi</source>
+            <description><![CDATA[<p>I recently bought a new 4TB hard drive for my (homemade) nas and started setting
+it up. I created a partition table with a single partition and an <code>ext4</code>
+filesystem. I then <code>mount</code>ed the partition, but before starting <code>rsync</code>ing my
+data, I wanted to do a little <a href="https://en.wikipedia.org/wiki/S.M.A.R.T.#Self-tests">S.M.A.R.T. testing</a>. the drive only supports
+<em>short</em> and <em>long</em> self tests, no <em>conveyance</em>. I went for the short one since
+I'm not very paranoid and I already have <code>smartd</code> setup to run tests weekly on
+all the nas's disks.</p>
+<p><code>smartctl</code> was so kind to tell me that the test will be completed in 2 minutes:</p>
+<pre><code>Testing has begun.
+Please wait 2 minutes for test to complete.
+Test will complete after Fri Jun 18 18:34:03 2021 CEST
+Use smartctl -X to abort test.
+</code></pre>
+<p>I listened to a song while waiting. 5 minutes goes by, song is over, let me
+check:</p>
+<pre><code>Self-test execution status:      ( 241) Self-test routine in progress...
+                                        10% of test remaining.
+</code></pre>
+<p>ok, 10% remaining, we are almost there. let's wait. and 10 minutes goes by,
+still 10% remaining. 20 minutes, still 10% remaining. 25 minutes, still 10%. it
+seems to be stuck! it should have completed in 2 minutes, but half an hour has
+passed and it still hasn't finished.</p>
+<p>I was ninety percent sure that I ran the short test, not the long one. I aborted
+the test with <code>smartctl -X</code> and this ugly line got into the self test log:</p>
+<pre><code>Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+...
+# 9  Short offline       Aborted by host               10%         0         -
+</code></pre>
+<p>which confirmed that it was indeed a <em>short</em> test.</p>
+<p>why was it taking so long? faulty disk?</p>
+<p>I ran the short test again hoping this time it would finish in a reasonable
+amount of time. same story, stuck at 10% remaining after more than 20 minutes. I
+then decided to use one of the old tricks that <em>always</em> works with technology: I
+rebooted the machine... boom, another nasty line in the log:</p>
+<pre><code># 8  Short offline       Interrupted (host reset)      10%         1         -
+</code></pre>
+<p>I started the test again. meanwhile my <em>google-fu</em> wasn't helping much, everyone
+talked about <strong>long</strong> tests being slow, 30+ hours on old disks that were about
+to fail. my disk is new, all the smart attributes are perfect. then I read
+somewhere that if the disk is doing a lot of I/O i.e.  is being used, the tests
+may take longer. ok, makes sense, but there is no data on my disk and no service
+is using it yet.</p>
+<p>I felt a bit discouraged, maybe I had to return this drive and wait for another
+one to arrive etc...</p>
+<p>as a last resort, I tried to <code>umount</code> the partition thinking that somehow it
+could help. <strong>10 seconds later the test completed without errors</strong>:</p>
+<pre><code># 7  Short offline       Completed without error       00%         2         -
+</code></pre>
+<p>woow! coincidence? at least the disk seems to be good. I immediately started
+another short test and completed without errors in 2 minutes!</p>
+<pre><code># 6  Short offline       Completed without error       00%         2         -
+</code></pre>
+<p>ok, tests takes long <strong>only</strong> when it's mounted. strange because <em>nobody</em> is
+using the disk (or at least that's what I believed). I thought: &quot;maybe I did
+something wrong when I partitioned the disk&quot; and I repartitioned it again,
+<code>mount</code>ed again aaand test stuck at 10% remaining.</p>
+<p>I didn't know what to do, I wasn't quite sure that the disk was OK and that it
+was <em>safe</em> to put data on it. I fired up <code>top</code>** and stared at it for a while
+thinking, like when you open the hood of a car trying to figure out what's
+wrong. now with cars, that never helped me because I know nothing about cars,
+but with computers sometimes it does help. I noticed this process that kept
+popping up: <code>ext4lazyinit</code>. mmmm never heard of it, but the name was suspicious.
+I found <a href="https://www.thomas-krenn.com/en/wiki/Ext4_Filesystem#Lazy_Initialization">this beautiful page</a> which talks about lazy initialization in <code>ext4</code>
+filesystems (emphasis mine):</p>
+<blockquote>
+<p>When creating an Ext4 file system, the existing regions of the inode tables
+must be cleaned (overwritten with nulls, or &quot;zeroed&quot;). The &quot;lazyinit&quot; feature
+should significantly accelerate the creation of a file system, because it does
+not immediately initialize all inode tables, initializing them gradually
+instead during the initial mounting process in background
+...
+<strong>The &quot;ext4lazyinit&quot; kernel process writes at up to 16,000kB/s to the device
+and thereby uses a great deal of the hard disk’s bandwidth</strong></p>
+</blockquote>
+<p>aaaha so maybe this is the process that is keeping my disk busy and it's slowing
+down short self tests! to prove this theory I recreated the filesystem <em>again</em>
+using these extended options:</p>
+<pre><code># mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sda1
+</code></pre>
+<blockquote>
+<p>By specifying these options, the inodes and the journal will be initialized
+immediately during creation.</p>
+</blockquote>
+<p>filesystem creation took quite a while this time, but in the end, no more
+<code>ext4lazyinit</code> process and short smart self test completed in about 2 minutes
+even with the partition mounted:</p>
+<pre><code># 3  Short offline       Completed without error       00%         3         -
+# 4  Short offline       Completed without error       00%         3         -
+# 5  Short offline       Completed without error       00%         3         -
+</code></pre>
+<p>another solution was probably to <em>just wait</em> and eventually short tests would
+complete rather fast once the disk was no more busy. at least, my &quot;impatience&quot;
+let me figure out what was really happening and learn new things which is always
+good!</p>
+<hr />
+<small>
+<p>** only later I discovered <code>iotop</code> which would have helped a lot.</p>
+</small>]]></description>
+        </item>
+
+        <item>
+            <title>a tetris clone</title>
+            <pubDate>Thu, 27 Jul 2017 00:00:00 +0000</pubDate>
+            <link>https://marcolucidi01.github.io/posts/a-tetris-clone.html</link>
+            <guid>https://marcolucidi01.github.io/posts/a-tetris-clone.html</guid>
+            <source url="https://marcolucidi01.github.io/rss.xml">Marco Lucidi</source>
+            <description><![CDATA[<p>this is my first &quot;&quot;&quot;big&quot;&quot;&quot; project in C, made after reading the bible <a href="https://en.wikipedia.org/wiki/The_C_Programming_Language">K&amp;R
+Second Edition</a> and after taking the Harvard course <a href="https://cs50.harvard.edu/">CS50</a>.</p>
+<p>actually I consider this as my &quot;final project&quot; for CS50: I enjoy C so much that
+I had to choose it as the main tool for the project.</p>
+<p>here a <a href="https://www.youtube.com/watch?v=HRttr5_LnvI">demo video</a> and here the <a href="https://github.com/MarcoLucidi01/tetris_clone"><strong>source code</strong></a>.</p>
+<h2>why tetris?</h2>
+<p>well, first because I like it: I used to play <strong>A LOT</strong> when I was a kid on a
+&quot;chinese fake GameBoy&quot; I had and more recently on my smartphone. and then
+because I wanted to do something simple within my reach, but at the same time a
+bit challenging, considering the language I chose.</p>
+<p>also it is often considered as an &quot;Hello, World!&quot; to game development so once in
+my life I had to do it.</p>
+<h2>the game</h2>
+<p>I tried to stick with the classic <em>Tetris</em>, so no &quot;wall kick&quot;, no &quot;hold piece&quot;,
+no &quot;ghost piece&quot;, but I applied some &quot;new&quot; features that I like: &quot;soft drop&quot;
+(without adding points) and this <a href="http://tetris.wikia.com/wiki/Random_Generator">random generator</a> so that I don't have to
+swear to get an <em>I</em>.</p>
+<p>keys to control what's on the screen are straightforward:</p>
+<ul>
+<li><strong>LEFT / DOWN / UP / RIGHT</strong> performs classical movements;</li>
+<li><strong>H / J / K / L</strong> also performs classical movements. did you recognize them?
+they are those of <a href="http://www.vim.org/">vim</a>! I'm a vim addicted and I thought it would be
+nice if I could use vim keys to play Tetris =).</li>
+<li><strong>SPACE</strong> performs &quot;hard drop&quot;.</li>
+<li><strong>P</strong> pause or unpause the game.</li>
+<li><strong>E</strong> ends the game when it is paused.</li>
+<li><strong>N</strong> starts a new game when the previous is over.</li>
+<li><strong>Q</strong> close the program when the game is over.</li>
+</ul>
+<p>after the end of each game, it saves the level, score and lines along with the
+current date and the time spent playing (including pause time) in a text file
+called &quot;scores.txt&quot; within the folder in which the executable resides.</p>
+<p>for now, there isn't a way to add a nickname (because you know, probably I will
+be the only player...).</p>
+<h2>the program</h2>
+<p>if you haven't notice yet, I used the <a href="https://en.wikipedia.org/wiki/Ncurses">ncurses</a> library.</p>
+<p>two &quot;design choices&quot; I made (I know I probably screw up somewhere) were: write
+&quot;reusable&quot; code (in part) and split different things in different files.</p>
+<p>here the files tree and a bit of explanation:</p>
+<pre><code>project/
+        Makefile
+        include/
+                actions.h
+                colors.h
+                controller.h
+                drawer.h
+                game.h
+                grid.h
+                helpers.h
+                tetramino.h
+        src/
+                controller.c
+                drawer.c
+                game.c
+                grid.c
+                helpers.c
+                main.c
+                tetramino.c
+</code></pre>
+<p>for the first time in my three months adventure with C, I felt the need to use a
+<a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/Makefile"><code>Makefile</code></a> and it turned out to be veeery useful of course.</p>
+<p>in <a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/helpers.c"><code>helpers.c</code></a> there are some helpers functions (youdontsay.jpg). there is
+for example a &quot;<code>malloc</code> wrapper&quot; who calls <code>exit(EXIT_FAILURE)</code> if it was not
+possible allocate memory. I call it (the wrapper) every time I need memory.</p>
+<p><a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/grid.c"><code>grid.c</code></a> contains functions to handle guess what? right, the game grid on
+which put blocks.</p>
+<p><a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/include/actions.h"><code>actions.h</code></a> contains an enum of &quot;actions&quot; i.e. commands that modify the
+current state of the game. I think their names are self-explanatory.</p>
+<p>the &quot;magic&quot; happens in the files <a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/main.c"><code>main.c</code></a> and <a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/game.c"><code>game.c</code></a>: they handle
+the game flow.</p>
+<p><a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/tetramino.c"><code>tetramino.c</code></a> defines all you need to create a <a href="https://en.wikipedia.org/wiki/Tetromino"><code>tetramino</code></a>, rotate
+or change its shape and blindly put / remove it on / from a grid if it is not
+locked.</p>
+<p>with <a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/controller.c"><code>controller.c</code></a> instead, you can perform &quot;actions&quot; on a tetramino only
+if that action is allowed, depending on the current state of the grid.</p>
+<p>that is, to move, rotate or drop a piece, <code>game.c</code> relies on the functions in
+<code>controller.c</code> who relies on the &quot;raw&quot; functions in <code>tetramino.c</code> after some
+tests.</p>
+<p><a href="https://github.com/MarcoLucidi01/tetris_clone/blob/master/src/drawer.c"><code>drawer.c</code></a> takes care of the &quot;ncurses part&quot; drawing the grid, the edges
+and some informations. it has a function, <code>refresh_scene()</code>, which is called in
+<code>game.c</code> to update what is on the screen when it's time to do so.</p>
+<p><code>grid.c</code> and even <code>drawer.c</code> could be easily reused in other projects, e.g. in a
+snake clone, tic-tac-toe, ..., basically anything who requires a simple grid,
+because I made them &quot;not Tetris specific&quot;.</p>
+<p>I tried to keep things as simple as possible (I always try to do this). for
+example, I hard coded all possible rotations for each piece in <code>tetramino.c</code>
+since in total they are only <em>4 x 7 = 28</em>. in this way I don't have to call a
+function to rotate a matrix and sometimes rotate it backwards, but my functions
+simply increment or decrement an index in range <em>[0,3]</em>. of course I did this
+because the amount of memory used is very low.</p>
+<h2>conclusion</h2>
+<p>at the end of the day, the main goals of this project were:</p>
+<ul>
+<li>learn something new;</li>
+<li>get a &quot;working&quot; Tetris clone;</li>
+<li>get my feet wet with ncurses;</li>
+<li>have some fun.</li>
+</ul>
+<p>and I guess I've achieved them all. even if it was not a big deal, it was my
+first time with many things: a multiple files program (in C), a Makefile,
+ncurses and small &quot;tricks&quot; I used in the code.</p>
+<p>so it was worth it!</p>
+<p>thank you for reading up to here, if you have any comment / suggestion or if you
+found a bug, please contact me via email. bye.</p>]]></description>
+        </item>
+
+        <item>
+            <title>installing only gnu/linux (debian jessie) on a mid 2011 imac</title>
+            <pubDate>Sat, 03 Dec 2016 00:00:00 +0000</pubDate>
+            <link>https://marcolucidi01.github.io/posts/installing-only-gnu-linux-debian-jessie-on-a-mid-2011-imac.html</link>
+            <guid>https://marcolucidi01.github.io/posts/installing-only-gnu-linux-debian-jessie-on-a-mid-2011-imac.html</guid>
+            <source url="https://marcolucidi01.github.io/rss.xml">Marco Lucidi</source>
+            <description><![CDATA[<p><a href="https://www.youtube.com/watch?v=TPbx6QH_p0s"><strong>boot process video</strong></a></p>
+<p>the reasons why I have done this are various, but I think, the most significant
+is that, after using a linux distro daily on my laptop, going back on osx at
+home was painful and I felt like in a &quot;cage&quot;. this was not good for me, and in
+fact, I preferred to use the laptop even at home and, I stopped to use that imac
+for a while.</p>
+<p>then I realize that a full linux installation on a mac can be done easily, so, I
+did some research (<a href="https://unix.stackexchange.com/questions/320107/installing-only-linux-on-a-mac-and-in-case-go-back-to-macos">question unix stackExchange</a>, <a href="https://wiki.archlinux.org/index.php/IMac_Aluminum">arch wiki</a>, <a href="https://wiki.debian.org/iMacIntel">debian
+wiki</a>) and on a sunday morning I did it!</p>
+<p>I have this little guy here (<a href="https://support.apple.com/kb/sp623?locale=en_US">imac12,1</a>), but with 8gb of ram which I
+personally installed.</p>
+<p>first of all, I made a <a href="https://support.apple.com/en-us/HT201372">macos installation media</a>, so, if in future I want, I
+can reinstall it easily, since my intention was to completely format the hard
+disk.</p>
+<p>then I used a debian 8 <a href="https://www.debian.org/CD/netinst/">netinstall</a> through an usb drive, simply rebooted
+holding down &quot;opt key&quot; and selected the right option. the installation was
+completed without issues using the ethernet cable (the wifi has been also
+recognized by the installer).</p>
+<p>I installed kde and at the first reboot I got only the shell! unfortunately
+<a href="https://packages.debian.org/stable/firmware-linux-nonfree">firmware-linux-nonfree</a> are required to get the radeon work!</p>
+<h2>what did work out of the box</h2>
+<ul>
+<li><strong>ethernet</strong>: since the installer;</li>
+<li><strong>wifi</strong>: I guess since the installer because it was recognized, but I can't
+say for sure;</li>
+<li><strong>usb</strong>: nothing to say;</li>
+<li><strong>thunderbolt</strong>: tested with a second 1080p vga monitor that I use regularly
+(the only thing I can test);</li>
+<li><strong>speakers</strong>;</li>
+<li><strong>camera and microphone</strong>: tested with vlc;</li>
+<li><strong>suspend to ram</strong>: all good;</li>
+<li><strong>cd/dvd</strong>: tested with k3b;</li>
+</ul>
+<h2>what did NOT work out of the box</h2>
+<ul>
+<li>
+<p><strong>video card</strong>: as I said, firmware-linux-nonfree are required;</p>
+</li>
+<li>
+<p><strong>jack audio</strong>: small issue, fix:</p>
+<pre><code># echo &quot;options snd-hda-intel model=imac27_122&quot; &gt;&gt; /etc/modprobe.d/imac\_local.conf
+</code></pre>
+<p>reboot. <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=743936">Bugreport</a>;</p>
+</li>
+<li>
+<p><strong>apple wireless keyboard and magic mouse</strong>: fun fact, in the installer, I
+did the entire process with the apple wireless keyboard, but then, once
+debian was up and running, it didn't work anymore. I guess, bluetooth
+drivers are missing, but I won't install them since I hate that things;</p>
+</li>
+<li>
+<p><strong>brightness</strong>: found a fix with xrandr:</p>
+<pre><code>xrandr --output eDP --brightness 0.5
+</code></pre>
+</li>
+</ul>
+<p>I can't test the <strong>firewire port</strong> nor the <strong>sd reader</strong>.</p>
+<p>finally I started to use this machine again!</p>]]></description>
+        </item>
+
+        <item>
+            <title>encrypt a pen drive with LUKS on linux</title>
+            <pubDate>Mon, 31 Oct 2016 00:00:00 +0000</pubDate>
+            <link>https://marcolucidi01.github.io/posts/encrypt-a-pen-drive-with-LUKS-on-linux.html</link>
+            <guid>https://marcolucidi01.github.io/posts/encrypt-a-pen-drive-with-LUKS-on-linux.html</guid>
+            <source url="https://marcolucidi01.github.io/rss.xml">Marco Lucidi</source>
+            <description><![CDATA[<h2>info</h2>
+<ul>
+<li><a href="https://gitlab.com/cryptsetup/cryptsetup">cryptsetup</a> (repo) <a href="https://linux.die.net/man/8/cryptsetup">man</a> (man page)</li>
+<li><a href="https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup">LUKS</a> (wikipedia)</li>
+<li><a href="https://wiki.archlinux.org/index.php/Dm-crypt/Device_encryption">dm-crypt/Device encryption</a> (archwiki)</li>
+</ul>
+<h2>set up the drive</h2>
+<p>first of all, we need to install <code>cryptsetup</code> on our system. I'm on debian so:</p>
+<pre><code># apt-get install cryptsetup
+</code></pre>
+<p>after connecting the drive, we need to get the device name assigned to it:</p>
+<pre><code># fdisk -l
+</code></pre>
+<p><img src="../imgs/fdisk-l.png" alt="fdisk-l" /></p>
+<p>as you can see, in my case is <code>/dev/sdb</code>.</p>
+<p>now, this step will destroy all data on the drive, MAKE SURE YOU HAVE A BACKUP
+BEFORE PROCEEDING.</p>
+<p><code>umount</code> your drive and then type:</p>
+<pre><code># cryptsetup -y -v luksFormat your-device
+
+-y: query for passwords twice
+-v: verbose
+</code></pre>
+<p>and follow the instruction on screen.</p>
+<p><img src="../imgs/cryptsetup-luksFormat.png" alt="cryptsetup-luksFormat" /></p>
+<p>of course, several other options can be added, I'm ok with the defaults, but if
+you want, in the info links, you will find suggestions to add other options.</p>
+<p>ok, the device is encrypted. what's missing? a file system!</p>
+<pre><code># cryptsetup luksOpen your-device name-you-want
+</code></pre>
+<p>to unlock the drive, you will be asked for the password of course</p>
+<pre><code># mkfs -t ext4 /dev/mapper/name-you-used-before
+</code></pre>
+<p>and you will get a result similar to this:</p>
+<p><img src="../imgs/mkfs-t-ext4.png" alt="mkfs-t-ext4" /></p>
+<p>now we can actually mount the drive. here a picture, I'll explain in the next
+section.</p>
+<p><img src="../imgs/mount-luks.png" alt="mount-luks" /></p>
+<h2>mount an encrypted drive</h2>
+<p>many desktop environments (at least KDE) are capable to recognize a <code>LUKS</code> drive
+when it is connected and do the dirty work for you</p>
+<p><img src="../imgs/kde-mount-luks.png" alt="kde-mount-luks" /></p>
+<p>but, since I'm a fan of command line (mainly because is a &quot;universal&quot; interface
+among distributions), I'm going to show that way.</p>
+<p>zero step: connect the drive and check the device name</p>
+<p>first step: unlock the drive</p>
+<pre><code># cryptsetup luksOpen your-device name-you-want
+</code></pre>
+<p>second step: mount the drive on a mount point</p>
+<pre><code># mount /dev/mapper/name-you-used-before mount-point-you-like
+</code></pre>
+<p>(with file systems different from <code>ext</code> could be required to specify the type)</p>
+<p>done!</p>
+<p><img src="../imgs/luks-summary.png" alt="luks-summary" /></p>
+<h2>umount an encrypted drive</h2>
+<p>things are easy here:</p>
+<pre><code># umount mount-point-used-before
+# cryptsetup luksClose name-used-before
+</code></pre>
+<p>done!</p>
+<h2>conclusion</h2>
+<p>this isn't a professional tutorial, no argument has been deepened, it's just a
+quick way to set up an encrypted pen drive (or external hard disk, sd card,
+etc...) with a password that works well on linux.</p>
+<p>I encourage you to explore more these topics starting from the links provided at
+the beginning of the post to get a better understanding of what we did today.</p>]]></description>
+        </item>
+
+        <item>
+            <title>virtualbox guest additions on debian</title>
+            <pubDate>Mon, 08 Feb 2016 00:00:00 +0000</pubDate>
+            <link>https://marcolucidi01.github.io/posts/virtualbox-guest-additions-on-debian.html</link>
+            <guid>https://marcolucidi01.github.io/posts/virtualbox-guest-additions-on-debian.html</guid>
+            <source url="https://marcolucidi01.github.io/rss.xml">Marco Lucidi</source>
+            <description><![CDATA[<p>ok, this is a post for myself: every time that I need to install a new vm on
+<a href="https://www.virtualbox.org/">virtualbox</a> I systematically forget the steps to install guest additions!</p>
+<p>most of the times, I install <a href="https://www.debian.org/">debian</a>, so this &quot;tutorial&quot; will be focused on this
+particular linux distribution.</p>
+<p>open a terminal:</p>
+<pre><code># apt-get update &amp;&amp; apt-get upgrade
+# apt-get install dkms
+</code></pre>
+<p>now from the <strong>Devices</strong> menu, click on &quot;Insert Guest Additions CD image...&quot;</p>
+<p>if the .iso will not mount automatically, in a terminal:</p>
+<pre><code># mount /media/cdrom
+</code></pre>
+<p>then:</p>
+<pre><code># sh /media/cdrom/VBoxLinuxAdditions.run
+# reboot
+</code></pre>
+<p>info: <a href="https://packages.debian.org/en/stable/dkms"><code>dkms</code></a></p>
+<p>from virtualbox site: &quot;Be sure to install DKMS before installing the Linux
+Guest Additions. If DKMS is not available or not installed, the guest kernel
+modules will need to be recreated manually whenever the guest kernel is
+updated&quot;.</p>
+<p>actually these three packages are what we need for the guest additions:
+<a href="https://packages.debian.org/en/stable/make"><code>make</code></a>, <a href="https://packages.debian.org/en/stable/gcc"><code>gcc</code></a>, <a href="https://packages.debian.org/en/stable/linux-headers-amd64"><code>linux-headers</code></a>, but they are included in
+dependencies of <code>dkms</code> so they are installed automatically with <code>dkms</code>.</p>
+<p>p.s. it's recommended to install <code>dkms</code> even on the host system.</p>
+<p>if the installation failed, make sure that you have the last .iso available and
+also the <a href="http://download.virtualbox.org/virtualbox/">last version of Virtualbox</a></p>]]></description>
+        </item>
+
+        <item>
+            <title>how to share wifi connection over ethernet on linux</title>
+            <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
+            <link>https://marcolucidi01.github.io/posts/how-to-share-wifi-connection-over-ethernet-on-linux.html</link>
+            <guid>https://marcolucidi01.github.io/posts/how-to-share-wifi-connection-over-ethernet-on-linux.html</guid>
+            <source url="https://marcolucidi01.github.io/rss.xml">Marco Lucidi</source>
+            <description><![CDATA[<p>after watching the <strong><a href="https://www.youtube.com/watch?v=YIRWwKraoRk">video</a></strong>, maybe you want to know what exactly the
+command does! well, I'll try to explain.</p>
+<p>I write again the command here:</p>
+<pre><code># iptables -t nat -A POSTROUTING -o wlan0 -s 192.168.2.108 -j MASQUERADE
+</code></pre>
+<p>of course this is an <a href="https://en.wikipedia.org/wiki/Iptables">iptables</a> rule which use the <a href="https://netfilter.org/documentation/HOWTO/NAT-HOWTO.html"><code>nat</code></a> table</p>
+<pre><code>iptables -t nat
+</code></pre>
+<p>with this in effect, we tell iptables to manipulate the table (-t) <a href="https://netfilter.org/documentation/HOWTO/NAT-HOWTO.html"><code>nat</code></a></p>
+<pre><code>-A POSTROUTING
+</code></pre>
+<p>append (<code>-A</code>) to chain <code>POSTROUTING</code>, the following rule</p>
+<pre><code>-o wlan0
+</code></pre>
+<p>means that <code>wlan0</code> must be the outgoing interface of the packets</p>
+<pre><code>-s 192.168.2.108 -j MASQUERADE
+</code></pre>
+<p>all packets which have as source address (<code>-s</code>) <code>192.168.2.108</code> (Xbox 360 IP)
+will be <a href="http://www.tldp.org/HOWTO/IP-Masquerade-HOWTO/ipmasq-background2.1.html">masked</a> (<code>-j MASQUERADE</code>) and will come out through <code>wlan0</code> (<code>-o wlan0</code>).</p>
+<p>for a better understanding what words like: <code>table</code>, <code>chain</code> etc.. mean, I
+suggest you to read the <a href="https://netfilter.org/documentation/">iptables documentation</a>.</p>
+<p>I hope I have helped you to share your wifi connection over ethernet!</p>]]></description>
+        </item>
+
+    </channel>
+</rss>

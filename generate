@@ -23,13 +23,13 @@ getpostmd() {
 }
 
 getpostdate() {
-        post="$(getpostmd "$1")"
-        sed -n '1p' "$post"
+        postmd="$(getpostmd "$1")"
+        sed -n '1p' "$postmd" # date is always on first line in md posts
 }
 
 getposttitle() {
-        post="$(getpostmd "$1")"
-        sed -n '3p' "$post"
+        postmd="$(getpostmd "$1")"
+        sed -n '3p' "$postmd" # title is always on third line in md posts
 }
 
 #
@@ -41,8 +41,8 @@ indexhtml() {
         indexmd="$2"
 
         cat "$headerhtml"
-        sed -n -e '1 s/^/<title>/' -e '1 s/$/<\/title>/p' "$indexmd"
-        cmark "$indexmd" | sed -e 's/\.md/\.html/g' | tac | awk '!f && /<ul>/ { $0="<ul class=\"no-bullet\">"; f=1 } 1' | tac
+        sed -n -e '1 s#^#<title>#' -e '1 s#$#</title>#p' "$indexmd"
+        cmark "$indexmd" | sed -e 's/\.md/.html/g' | tac | awk '!f && /^<ul/ { $0="<ul class=\"no-bullet\">"; f=1 } 1' | tac
 }
 
 indexmd() {
@@ -53,10 +53,10 @@ indexmd() {
         cat "$aboutmd"
         printf "\nposts <small>([rss](%s))</small>\n-------------------------------------\n\n" "$rssxml"
         tmp="$(mktemp)"
-        for post in "$@"; do
-                date="$(sed -n '1p' "$post")"
-                title="$(sed -n '3p' "$post")"
-                printf "%c %s [%s](%s)\n" "-" "$date" "$title" "$post" >> "$tmp"
+        for postmd in "$@"; do
+                date="$(getpostdate "$postmd")"
+                title="$(getposttitle "$postmd")"
+                printf "%c %s [%s](%s)\n" "-" "$date" "$title" "$postmd" >> "$tmp"
         done
         sort -r "$tmp"
         rm "$tmp"
@@ -101,8 +101,9 @@ rssxml() {
                 posttitle="$(getposttitle "$posthtml")"
                 postlink="$baseurl/$posthtml"
                 # TODO https://validator.w3.org/feed/ says the feed is valid,
-                # but "description should not contain relative URL references"
-                postdesc="$(awk '/^<h1/ && !p { p=1; next } /^<footer/ { p=0 } p' "$posthtml")"
+                # but "description should not contain relative URL references".
+                # it doesn't seem to be a problem with newsboat nor thunderbird.
+                postdesc="$(awk '!p && /^<h1/ { p=1; next } /^<footer/ { p=0 } p' "$posthtml")"
                 postdate="$(echo "$postdate" | xargs date --utc --rfc-email --date)"
 
                 printf '
@@ -130,10 +131,12 @@ posthtml() {
         postmd="$2"
         footerhtml="$3"
 
-        sed 's/href="/href="..\//g' "$headerhtml"
-        sed -n -e '3 s/^/<title>/' -e '3 s/$/<\/title>/p' "$postmd"
+        # assume postmd is inside posts/, this means links in header and footer
+        # must be relative to that directory. ugly.
+        sed 's#href="#href="../#g' "$headerhtml"
+        getposttitle "$postmd" | sed -e 's#^#<title>#' -e 's#$#</title>#'
         cmark "$postmd"
-        sed 's/href="/href="..\//g' "$footerhtml"
+        sed 's#href="#href="../#g' "$footerhtml"
 }
 
 newpost() {
@@ -141,12 +144,12 @@ newpost() {
         title="$2"
         dieifempty "$title" "missing TITLE=\"\""
 
-        post="$postsdir/$(echo "$title" | sed -e 's/\s\+/-/g' -e 's/$/.md/')"
+        postmd="$postsdir/$(echo "$title" | sed -e 's/\s\+/-/g' -e 's/$/.md/')"
         date="$(date +"%Y-%m-%d")"
         titlelen="$(printf "%s" "$title" | wc -m)"
         heading="$(yes '=' | head -n "$titlelen" | tr -d '\n')"
-        printf "%s\n\n%s\n%s\n\n\n" "$date" "$title" "$heading" >> "$post"
-        vi "$post"
+        printf "%s\n\n%s\n%s\n\n\n" "$date" "$title" "$heading" >> "$postmd"
+        vi "$postmd"
 }
 
 #
@@ -156,4 +159,11 @@ newpost() {
 action="$1"
 dieifempty "$action" "missing action"
 shift
-$action "$@"
+case "$action" in "-h" | "--help")
+        echo "usage: $0 action [args...]"
+        echo "DO NOT USE IT DIRECTLY, USE IT THROUGH MAKE. SEE makefile."
+        ;;
+*)
+        $action "$@"
+        ;;
+esac

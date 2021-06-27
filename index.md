@@ -23,7 +23,7 @@ projects
 - [tetris_clone][7] — a plain Tetris clone made in C using ncurses library
 - [privately-search-selected][8] — Firefox addon that adds menu item to privately search selected text
 - [todo][9] — command line todo list
-- [b64][10] — base64 encoding and decoding tool ([codereview][11])
+- [b64][10] — base64 encoding and decoding tool <small>([codereview][11])</small>
 - [dotfiles][12] & [bin][13] — my dotfiles & utility scripts
 
 [6]: https://github.com/MarcoLucidi01/sws

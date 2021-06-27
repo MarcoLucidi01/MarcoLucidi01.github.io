@@ -6,8 +6,8 @@
         <link>https://marcolucidi01.github.io</link>
         <description>twenty five years old. italian. computer science enthusiast. programmer.</description>
         <language>en</language>
-        <pubDate>Sat, 26 Jun 2021 15:02:30 +0000</pubDate>
-        <lastBuildDate>Sat, 26 Jun 2021 15:02:30 +0000</lastBuildDate>
+        <pubDate>Sun, 27 Jun 2021 11:18:13 +0000</pubDate>
+        <lastBuildDate>Sun, 27 Jun 2021 11:18:13 +0000</lastBuildDate>
         <generator>https://marcolucidi01.github.io/generate</generator>
         <docs>https://blogs.law.harvard.edu/tech/rss</docs>
 
@@ -112,9 +112,7 @@ complete rather fast once the disk was no more busy. at least, my &quot;impatien
 let me figure out what was really happening and learn new things which is always
 good!</p>
 <hr />
-<small>
-<p>** only later I discovered <code>iotop</code> which would have helped a lot.</p>
-</small>]]></description>
+<p><small>** only later I discovered <code>iotop</code> which would have helped a lot.</small></p>]]></description>
         </item>
 
         <item>

@@ -117,8 +117,4 @@ good!
 
 ---
 
-<small>
-
-** only later I discovered `iotop` which would have helped a lot.
-
-</small>
+<small>** only later I discovered `iotop` which would have helped a lot.</small>

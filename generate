@@ -66,9 +66,8 @@ rssxml() {
         baseurl="$1"
         rssurl="$baseurl/$2"
         generator="$baseurl/$(basename "$0")"
-        lang="$3"
-        aboutmd="$4"
-        shift 4 # rest of arguments are html posts filepaths
+        aboutmd="$3"
+        shift 3 # rest of arguments are html posts filepaths
 
         channeltitle="$(sed -n '1p' "$aboutmd")"
         channeldesc="$(sed -n '4p' "$aboutmd")"
@@ -78,15 +77,15 @@ rssxml() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <atom:link href="%s" rel="self" type="application/rss+xml"/>
-        <title>%s</title>
         <link>%s</link>
+        <language>en</language>
+        <title>%s</title>
         <description>%s</description>
-        <language>%s</language>
         <pubDate>%s</pubDate>
         <lastBuildDate>%s</lastBuildDate>
         <generator>%s</generator>
         <docs>https://blogs.law.harvard.edu/tech/rss</docs>
-' "$rssurl" "$channeltitle" "$baseurl" "$channeldesc" "$lang" "$now" "$now" "$generator"
+' "$rssurl" "$baseurl" "$channeltitle" "$channeldesc" "$now" "$now" "$generator"
 
         tmp="$(mktemp)"
         for posthtml in "$@"; do

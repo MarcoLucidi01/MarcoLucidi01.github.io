@@ -10,9 +10,8 @@ INDEXMD    = index.md
 INDEXHTML  = index.html
 HEADERHTML = header.html
 FOOTERHTML = footer.html
-BASEURL    = https://marcolucidi01.github.io
 RSSXML     = rss.xml
-LANG       = en
+BASEURL    = https://marcolucidi01.github.io
 
 all: $(INDEXHTML) $(RSSXML) $(POSTSHTML)
 
@@ -26,7 +25,7 @@ $(INDEXMD): $(ABOUTMD) $(POSTSMD)
 
 $(RSSXML): $(ABOUTMD) $(POSTSHTML)
 	@echo $@
-	@$(GENERATE) rssxml "$(BASEURL)" "$@" "$(LANG)" $^ > $@
+	@$(GENERATE) rssxml "$(BASEURL)" "$(RSSXML)" $^ > $@
 
 %.html: $(HEADERHTML) %.md $(FOOTERHTML)
 	@echo $@

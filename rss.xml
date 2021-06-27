@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <atom:link href="https://marcolucidi01.github.io/rss.xml" rel="self" type="application/rss+xml"/>
-        <title>Marco Lucidi</title>
         <link>https://marcolucidi01.github.io</link>
-        <description>twenty five years old. italian. computer science enthusiast. programmer.</description>
         <language>en</language>
-        <pubDate>Sun, 27 Jun 2021 11:18:13 +0000</pubDate>
-        <lastBuildDate>Sun, 27 Jun 2021 11:18:13 +0000</lastBuildDate>
+        <title>Marco Lucidi</title>
+        <description>twenty five years old. italian. computer science enthusiast. programmer.</description>
+        <pubDate>Sun, 27 Jun 2021 12:33:35 +0000</pubDate>
+        <lastBuildDate>Sun, 27 Jun 2021 12:33:35 +0000</lastBuildDate>
         <generator>https://marcolucidi01.github.io/generate</generator>
         <docs>https://blogs.law.harvard.edu/tech/rss</docs>
 

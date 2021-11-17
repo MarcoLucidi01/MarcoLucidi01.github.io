@@ -11,6 +11,10 @@ set -e
 # utils
 #
 
+cmark() {
+        command cmark --unsafe --validate-utf8 "$@"
+}
+
 dieifempty() {
         if [ -z "$1" ]; then
                 echo "error: $2" >&2

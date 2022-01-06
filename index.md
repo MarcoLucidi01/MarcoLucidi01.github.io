@@ -19,23 +19,25 @@ if you wish to contact me, send an email to:
 projects
 --------
 
-- [sws][6] — simple static web server
-- [tetris_clone][7] — a plain Tetris clone made in C using ncurses library
-- [privately-search-selected][8] — Firefox addon that adds menu item to privately search selected text
-- [after][9] — run a command after a process terminates
-- [sbard][10] — status bar daemon for dwm-like window managers
-- [b64][11] — base64 encoding and decoding tool <small>([codereview][12])</small>
-- [dotfiles][13] & [bin][14] — my dotfiles & utility scripts
+- [ytcast][6] — cast YouTube videos to your smart TV from command-line
+- [sws][7] — simple static web server
+- [tetris_clone][8] — a plain Tetris clone made in C using ncurses library
+- [privately-search-selected][9] — Firefox addon that adds menu item to privately search selected text
+- [after][10] — run a command after a process terminates
+- [sbard][11] — status bar daemon for dwm-like window managers
+- [b64][12] — base64 encoding and decoding tool <small>([codereview][13])</small>
+- [dotfiles][14] & [bin][15] — my dotfiles & utility scripts
 
-[6]: https://github.com/MarcoLucidi01/sws
-[7]: https://github.com/MarcoLucidi01/tetris_clone
-[8]: https://github.com/MarcoLucidi01/privately-search-selected
-[9]: https://github.com/MarcoLucidi01/after
-[10]: https://github.com/MarcoLucidi01/sbard
-[11]: https://github.com/MarcoLucidi01/b64
-[12]: https://codereview.stackexchange.com/questions/232103/base64-encoding-and-decoding-tool
-[13]: https://github.com/MarcoLucidi01/dotfiles
-[14]: https://github.com/MarcoLucidi01/bin
+[6]: https://github.com/MarcoLucidi01/ytcast
+[7]: https://github.com/MarcoLucidi01/sws
+[8]: https://github.com/MarcoLucidi01/tetris_clone
+[9]: https://github.com/MarcoLucidi01/privately-search-selected
+[10]: https://github.com/MarcoLucidi01/after
+[11]: https://github.com/MarcoLucidi01/sbard
+[12]: https://github.com/MarcoLucidi01/b64
+[13]: https://codereview.stackexchange.com/questions/232103/base64-encoding-and-decoding-tool
+[14]: https://github.com/MarcoLucidi01/dotfiles
+[15]: https://github.com/MarcoLucidi01/bin
 
 posts <small>([rss](rss.xml))</small>
 -------------------------------------

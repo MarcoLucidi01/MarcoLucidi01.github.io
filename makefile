@@ -1,27 +1,38 @@
 .POSIX:
 .PHONY: all post clean
 
-GENERATE   = ./generate
-POSTSDIR   = posts
-POSTSMD    = $(wildcard $(POSTSDIR)/*.md)
-POSTSHTML  = $(patsubst %.md, %.html, $(POSTSMD))
-ABOUTMD    = about.md
-INDEXMD    = index.md
-INDEXHTML  = index.html
-HEADERHTML = header.html
-FOOTERHTML = footer.html
-RSSXML     = rss.xml
-BASEURL    = https://marcolucidi01.github.io
+GENERATE       = ./generate
+POSTSDIR       = posts
+POSTSINDEXMD   = $(POSTSDIR)/index.md
+POSTSINDEXHTML = $(POSTSDIR)/index.html
+POSTSMD        = $(shell find $(POSTSDIR) -name "*.md" ! -wholename "$(POSTSINDEXMD)")
+POSTSHTML      = $(patsubst %.md, %.html, $(POSTSMD))
+ABOUTMD        = about.md
+INDEXMD        = index.md
+INDEXHTML      = index.html
+HEADERHTML     = header.html
+FOOTERHTML     = footer.html
+RSSXML         = rss.xml
+BASEURL        = https://marcolucidi01.github.io
 
-all: $(INDEXHTML) $(RSSXML) $(POSTSHTML)
+all: $(INDEXHTML) $(POSTSINDEXHTML) $(POSTSHTML) $(RSSXML)
 
-$(INDEXHTML): $(HEADERHTML) $(INDEXMD)
+$(INDEXHTML): $(HEADERHTML) $(ABOUTMD) $(INDEXMD)
 	@echo $@
 	@$(GENERATE) indexhtml $^ > $@
 
-$(INDEXMD): $(ABOUTMD) $(POSTSMD)
+# INDEXMD should be just a redirect to ABOUTMD, but i don't know how to make redirects in github pages
+$(INDEXMD): $(ABOUTMD)
 	@echo $@
-	@$(GENERATE) indexmd "$(RSSXML)" $^ > $@
+	@cp $< $@
+
+$(POSTSINDEXHTML): $(HEADERHTML) $(ABOUTMD) $(POSTSINDEXMD) $(FOOTERHTML)
+	@echo $@
+	@$(GENERATE) postsindexhtml $^ > $@
+
+$(POSTSINDEXMD): $(POSTSMD)
+	@echo $@
+	@$(GENERATE) postsindexmd $^ > $@
 
 $(RSSXML): $(ABOUTMD) $(POSTSHTML)
 	@echo $@
@@ -35,4 +46,4 @@ post:
 	@$(GENERATE) newpost "$(POSTSDIR)" "$(TITLE)"
 
 clean:
-	@rm -f $(INDEXHTML) $(INDEXMD) $(RSSXML) $(POSTSHTML)
+	@rm -f $(INDEXHTML) $(INDEXMD) $(POSTSINDEXHTML) $(POSTSINDEXMD) $(POSTSHTML) $(RSSXML)

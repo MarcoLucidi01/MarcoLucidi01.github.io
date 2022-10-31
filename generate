@@ -42,25 +42,34 @@ getposttitle() {
 
 indexhtml() {
         headerhtml="$1"
-        indexmd="$2"
+        aboutmd="$2"
 
         cat "$headerhtml"
-        sed -n -e '1 s#^#<title>#' -e '1 s#$#</title>#p' "$indexmd"
-        cmark "$indexmd" | sed -e 's/\.md/.html/g' | tac | awk '!f && /^<ul/ { $0="<ul class=\"no-bullet\">"; f=1 } 1' | tac
+        sed -n -e '1 s#^#<title>#' -e '1 s#$#</title>#p' "$aboutmd"
+        cmark "$aboutmd"
 }
 
-indexmd() {
-        rssxml="$1"
+postsindexhtml() {
+        headerhtml="$1"
         aboutmd="$2"
-        shift 2 # rest of arguments are markdown posts filepaths
+        postsindexmd="$3"
+        footerhtml="$4"
 
-        cat "$aboutmd"
-        printf "\nposts <small>([rss](%s))</small>\n-------------------------------------\n\n" "$rssxml"
+        sed 's#href="#href="../#g' "$headerhtml"
+        printf "<title>%s's posts</title>\n" "$(sed -n '1p' "$aboutmd")"
+        cmark "$postsindexmd" | sed -e 's/\.md/.html/' -e 's/^<ul>/<ul class="no-bullet">/'
+        sed 's#href="#href="../#g' "$footerhtml"
+}
+
+postsindexmd() {
+        # arguments are markdown posts filepaths
+
+        printf "posts\n=====\n\n"
         tmp="$(mktemp)"
         for postmd in "$@"; do
                 date="$(getpostdate "$postmd")"
                 title="$(getposttitle "$postmd")"
-                printf "%c %s [%s](%s)\n" "-" "$date" "$title" "$postmd" >> "$tmp"
+                printf "%c %s [%s](%s)\n" "-" "$date" "$title" "$(basename "$postmd")" >> "$tmp"
         done
         sort -r "$tmp"
         rm "$tmp"

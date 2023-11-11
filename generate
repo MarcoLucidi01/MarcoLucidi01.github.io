@@ -46,7 +46,19 @@ indexhtml() {
 
         cat "$headerhtml"
         sed -n -e '1 s#^#<title>#' -e '1 s#$#</title>#p' "$aboutmd"
-        cmark "$aboutmd"
+        cmark "$aboutmd" | sed -e 's/\.md/.html/g'
+}
+
+linkshtml() {
+        headerhtml="$1"
+        aboutmd="$2"
+        linksmd="$3"
+        footerhtml="$4"
+
+        cat "$headerhtml"
+        printf "<title>%s's links</title>\n" "$(sed -n '1p' "$aboutmd")"
+        cmark "$linksmd"
+        cat "$footerhtml"
 }
 
 postsindexhtml() {
@@ -162,6 +174,26 @@ newpost() {
         heading="$(yes '=' | head -n "$titlelen" | tr -d '\n')"
         printf "%s\n\n%s\n%s\n\n\n" "$date" "$title" "$heading" >> "$postmd"
         vi "$postmd"
+}
+
+newlink() {
+        linksmd="$1"
+
+        url=""
+        for sel in clipboard secondary primary; do
+                url="$(xclip -selection "$sel" -out 2> /dev/null || true)"
+                printf '%s' "$url" | grep --quiet '^http' && break
+                url=""
+        done
+
+        awk -v "url=$url" '
+                BEGIN { newlink = sprintf("- %s [](%s)", strftime("%Y-%m-%d"), url) }
+                !f && /^-/ { f=1; print newlink }
+                1
+                END { if (!f) print newlink }
+        ' "$linksmd" | sponge "$linksmd"
+
+        vi "$linksmd"
 }
 
 #

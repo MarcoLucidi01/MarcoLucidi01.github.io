@@ -39,3 +39,8 @@ projects
 [17]: https://codereview.stackexchange.com/questions/232103/base64-encoding-and-decoding-tool
 [18]: https://github.com/MarcoLucidi01/dotfiles
 [19]: https://github.com/MarcoLucidi01/bin
+
+see also [links][30] and [posts][31].
+
+[30]: links.md
+[31]: posts/index.md

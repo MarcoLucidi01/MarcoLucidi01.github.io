@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2023-11-24 [How fast are Linux pipes anyway?](https://mazzo.li/posts/fast-pipes.html)
 - 2023-11-22 [GTA: why does the moon change size when you snipe it?](https://insiderockstarnorth.blogspot.com/2023/11/why-does-moon-change-size-when-you.html)
 - 2023-11-17 [Bash Word Designators](https://www.gnu.org/software/bash/manual/html_node/Word-Designators.html)
 - 2023-11-11 [Man from the South with Peter Lorre and Steve McQueen (1960)](https://www.youtube.com/watch?v=zvyaovvQ0TI)

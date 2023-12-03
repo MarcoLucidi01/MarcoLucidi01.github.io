@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2023-12-03 [Eskil Steenberg: how I program C](https://www.youtube.com/watch?v=443UNeGrFoM)
 - 2023-12-03 [Jonathan Blow: techniques for dealing with lack of motivation, malaise, depression](https://www.youtube.com/watch?v=i7kh8pnrwoo)
 - 2023-12-02 [Old Unix programs running on modern computers](https://github.com/rsc/unix)
 - 2023-11-24 [How fast are Linux pipes anyway?](https://mazzo.li/posts/fast-pipes.html)

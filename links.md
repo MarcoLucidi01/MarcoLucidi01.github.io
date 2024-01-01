@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-01-01 [Disney's Mickey Mouse enter public domain](https://www.bbc.com/news/entertainment-arts-67833411)
 - 2023-12-29 [Grand Theft Auto VI Trailer 1](https://www.youtube.com/watch?v=QdBZY2fkU-0)
 - 2023-12-23 [The final speech from The Great Dictator](https://www.charliechaplin.com/en/articles/29-the-final-speech-from-the-great-dictator-ei7oofoof6Ahth)
 - 2023-12-03 [Eskil Steenberg: how I program C](https://www.youtube.com/watch?v=443UNeGrFoM)

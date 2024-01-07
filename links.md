@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-01-07 [A tiny hand crafted CPU emulator, C compiler, and Operating System](https://github.com/rswier/swieros)
 - 2024-01-06 [GoAWK: an AWK interpreter written in Go](https://github.com/benhoyt/goawk)
 - 2024-01-05 [POSIX Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html)
 - 2024-01-01 [Disney's Mickey Mouse enter public domain](https://www.bbc.com/news/entertainment-arts-67833411)

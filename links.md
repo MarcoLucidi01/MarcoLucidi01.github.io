@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-01-30 [curl http://example.com --libcurl example.c](https://everything.curl.dev/libcurl/libcurl)
 - 2024-01-28 [Niente di nuovo sul fronte Occidentale (audiolibro)](https://www.youtube.com/playlist?list=PLV8YXKhnMoJLUG4yMX9lymb0azd8zqm5w)
 - 2024-01-14 [Bike Lanes by Casey Neistat](https://www.youtube.com/watch?v=bzE-IMaegzQ)
 - 2024-01-12 [How can I pipe stderr, and not stdout?](https://stackoverflow.com/questions/2342826/how-can-i-pipe-stderr-and-not-stdout)

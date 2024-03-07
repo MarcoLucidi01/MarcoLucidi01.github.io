@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-03-07 [PostgreSQL query plan and SQL performance notes](https://gist.github.com/pechorin/693ec960d850aeac5732383a547d1e17)
 - 2024-02-18 [Architecture of Consoles (copetti.org)](https://www.copetti.org/writings/consoles/)
 - 2024-02-10 [How I write HTTP services in Go after 13 years](https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/)
 - 2024-01-30 [curl http://example.com --libcurl example.c](https://everything.curl.dev/libcurl/libcurl)

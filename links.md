@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-03-30 [Backdoor in upstream xz/liblzma leading to ssh server compromise](https://www.openwall.com/lists/oss-security/2024/03/29/4)
 - 2024-03-10 [The Underground Clocks of Paris](https://youtube.com/watch?v=gol_p2aWrJg)
 - 2024-03-07 [PostgreSQL query plan and SQL performance notes](https://gist.github.com/pechorin/693ec960d850aeac5732383a547d1e17)
 - 2024-02-18 [Architecture of Consoles (copetti.org)](https://www.copetti.org/writings/consoles/)

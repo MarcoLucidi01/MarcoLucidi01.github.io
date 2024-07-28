@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-07-28 [SQLite: 35% Faster Than the Filesystem](https://sqlite.org/fasterthanfs.html)
 - 2024-05-19 [Why We Can't Have Nice Software](https://andrewkelley.me/post/why-we-cant-have-nice-software.html)
 - 2024-03-30 [Backdoor in upstream xz/liblzma leading to ssh server compromise](https://www.openwall.com/lists/oss-security/2024/03/29/4)
 - 2024-03-10 [The Underground Clocks of Paris](https://youtube.com/watch?v=gol_p2aWrJg)

@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-11-14 [Rob Pike: Lexical Scanning in Go](https://www.youtube.com/watch?v=HxaD_trXwRE)
 - 2024-11-10 [How To Design A Good API and Why it Matters](https://www.youtube.com/watch?v=aAb7hSCtvGw)
 - 2024-11-03 [Write code that is easy to delete, not easy to extend](https://programmingisterrible.com/post/139222674273/write-code-that-is-easy-to-delete-not-easy-to)
 - 2024-07-28 [SQLite: 35% Faster Than the Filesystem](https://sqlite.org/fasterthanfs.html)

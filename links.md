@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2024-12-29 [The 70% problem: Hard truths about AI-assisted coding](https://addyo.substack.com/p/the-70-problem-hard-truths-about)
 - 2024-12-21 [Salvatore Sanfilippo: Redis, Open Source e Divulgazione](https://www.youtube.com/watch?v=GgT6rXytKds)
 - 2024-12-21 [Admiral Grace Hopper Explains the Nanosecond](https://www.youtube.com/watch?v=9eyFDBPk4Yw)
 - 2024-11-14 [Rob Pike: Lexical Scanning in Go](https://www.youtube.com/watch?v=HxaD_trXwRE)

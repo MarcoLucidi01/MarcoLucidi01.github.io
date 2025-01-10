@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2025-01-10 [Mistakes engineers make in large established codebases](https://www.seangoedecke.com/large-established-codebases/)
 - 2024-12-30 [Corso BASIC RAI - Episodio 1 (1986): Introduzione alla Programmazione](https://www.youtube.com/watch?v=e3d-RwD3_Qw)
 - 2024-12-29 [The 70% problem: Hard truths about AI-assisted coding](https://addyo.substack.com/p/the-70-problem-hard-truths-about)
 - 2024-12-21 [Salvatore Sanfilippo: Redis, Open Source e Divulgazione](https://www.youtube.com/watch?v=GgT6rXytKds)

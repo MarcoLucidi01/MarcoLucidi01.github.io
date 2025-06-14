@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2025-06-14 [AI is Making Developers Lazy: RIP Core Coding Skills](https://www.darrenhorrocks.co.uk/ai-making-developers-lazy-rip-core-coding-skills/)
 - 2025-03-02 [SQL Noir](https://www.sqlnoir.com/)
 - 2025-03-02 [Cognitive Load is what matters](https://github.com/zakirullin/cognitive-load)
 - 2025-02-10 [We are destroying software](https://antirez.com/news/145)

@@ -4,6 +4,7 @@ links
 random, interesting stuff i found on the internet (mainly from Hacker News,
 Reddit and YouTube), in english or italian.
 
+- 2026-02-14 [I Started Programming When I Was 7. I'm 50 Now, and the Thing I Loved Has Changed](https://www.jamesdrandall.com/posts/the_thing_i_loved_has_changed/)
 - 2025-12-30 [There is no memory safety without thread safety](https://www.ralfj.de/blog/2025/07/24/memory-safety.html)
 - 2025-06-14 [AI is Making Developers Lazy: RIP Core Coding Skills](https://www.darrenhorrocks.co.uk/ai-making-developers-lazy-rip-core-coding-skills/)
 - 2025-03-02 [SQL Noir](https://www.sqlnoir.com/)

@@ -1,7 +1,7 @@
 Marco Lucidi
 ============
 
-twenty-something years old. italian. computer science enthusiast. programmer.
+thirty-something years old. italian. computer science enthusiast. programmer.
 
 you can find me on [GitHub][1], [StackOverflow][2], [LinkedIn][3], [Reddit][4],
 [YouTube][5] and [Letterboxd][6].
